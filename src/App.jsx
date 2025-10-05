@@ -1,6 +1,7 @@
 
 import { Suspense, useState } from 'react';
 import './App.css';
+import { ToastContainer } from 'react-toastify';
 
 import AvailablePlayers from './components/AvailablePlayers/AvailablePlayers';
 import Navbar from './components/Navbar/Navbar';
@@ -17,13 +18,14 @@ function App() {
 
   const [toggle, setToggle] = useState(true);
   
-  const [availableBalance, setAvailableBalance] = useState(600000)
+  const [availableBalance, setAvailableBalance] = useState(600000000)
 
   const [purchasedPlayers, setPurchasedPlayers] = useState([]);
 
   const removePlayer = (p) => {
     const filteredData = purchasedPlayers.filter(ply => ply.player_name !== p.player_name)
     setPurchasedPlayers(filteredData)
+    setAvailableBalance(availableBalance + p.price)
   }
   // console.log(purchasedPlayers)
 
@@ -34,7 +36,7 @@ function App() {
       <Navbar availableBalance ={availableBalance}></Navbar>
 
       <div className='max-w-[1200px] mx-auto  flex justify-between items-center'>
-        <h1 className='font-bold text-2xl'>{toggle  === true? "Available Players" : `Selected Players (${purchasedPlayers.length}/6)`}</h1>
+        <h1 className='font-bold text-2xl'>{toggle  === true? "Available Players" : `Selected Players (${purchasedPlayers.length}/11)`}</h1>
 
         <div className='font-bold'>
           <button onClick={() => setToggle(true)} className={`py-3 px-4 border-1 border-gray-400 rounded-l-2xl border-r-0 cursor-pointer ${toggle === true? "bg-[#E7FE29]" : ""}`}>Available</button>
@@ -47,17 +49,17 @@ function App() {
 
       {
         toggle === true ? <Suspense fallback={<span className="loading loading-spinner loading-xl"></span>}>
-          <AvailablePlayers purchasedPlayers={purchasedPlayers} setPurchasedPlayers={setPurchasedPlayers} setAvailableBalance={setAvailableBalance} availableBalance={availableBalance} playersPromise={playersPromise}></AvailablePlayers>
+          <AvailablePlayers   purchasedPlayers={purchasedPlayers} setPurchasedPlayers={setPurchasedPlayers} setAvailableBalance={setAvailableBalance} availableBalance={availableBalance} playersPromise={playersPromise}></AvailablePlayers>
 
         </Suspense> : 
         
-        <SelectedPlayers purchasedPlayers={purchasedPlayers} removePlayer={removePlayer}></SelectedPlayers>
+        <SelectedPlayers setToggle={setToggle} purchasedPlayers={purchasedPlayers} removePlayer={removePlayer}></SelectedPlayers>
 
       }
 
 
       {/* Selected Players component */}
-
+      <ToastContainer/>
     </>
   )
 }
